@@ -112,11 +112,53 @@ Two things worth taking from this:
   **73.6%** of the time. The ordering is right (hence AUC 0.82) but the numbers are compressed
   toward 0.5 — read them as ranks, not probabilities.
 
-### What this implies
+### The payoff can't be fixed by tuning — 12-point sweep
 
-The classifier is worth keeping; this trade is not. With a 76%-accurate direction call, the fix is on
-the **payoff**, not the model: exit at a fraction of the box height, or stop nearer the box edge, and
-sweep the geometry with the direction held fixed.
+Direction held fixed at the model's call; only the exit varies. Stop is expressed as a fraction of
+the box height inside the broken edge; target as a multiple of box height.
+
+| stop ↓ / target → | 0.5× | 1.0× | 1.5× | 2.0× |
+| --- | --- | --- | --- | --- |
+| 0.25 × box | −0.533 | −0.506 | −0.486 | −0.459 |
+| 0.5 × box | −0.309 | −0.288 | −0.278 | −0.259 |
+| 1.0 × box (opposite edge) | −0.171 | **−0.162** | −0.156 | −0.146 |
+
+*15m, per-order expectancy net of costs. 1h shows the same shape.*
+
+**Every cell loses**, and tighter stops are strictly worse: cost in R scales as `1/risk`, so halving
+the stop doubles the cost drag and noise takes the rest. The current geometry (−0.162R) is within
+0.02R of the best cell in the entire grid. There is no knob here that turns this positive.
+
+### Does the probability at least predict *how far* it runs?
+
+Conditioning on the boxes that actually broke **up** on 15m:
+
+| | mean p | expectancy | hit rate |
+| --- | --- | --- | --- |
+| lowest p decile | 0.19 | −0.119R | 49% |
+| highest p decile | 0.91 | **+0.073R** | 57% |
+
+So there *is* a magnitude gradient on 15m (+0.191R top-to-bottom). **But it does not replicate.**
+The same measurement on 1h runs the other way (−0.063R), and the short side is flat at every
+confidence level (−0.030R spread on 15m, +0.021R on 1h). One pocket, one timeframe, one 120-day
+window, with the mirror contradicting it — that is a hypothesis, not an edge.
+
+## Verdict
+
+**The direction model is real. The trade built on it is not.**
+
+- Predicting which way a consolidation breaks works, out of sample, and stable across folds:
+  **76.3% / AUC 0.821** on 15m, **71.2% / AUC 0.769** on 1h.
+- Every trading configuration tested loses — 12 exit geometries, 5 confidence thresholds, both
+  timeframes, both directions. The only positive pocket fails to replicate out of its timeframe.
+- The reason is now precise: the model predicts **direction**, but a trade's outcome depends on
+  **magnitude**, and the follow-through after a breakout is close to a coin flip (49% hit at
+  sub-1 R:R). Being right about the side while being blind to the distance does not pay.
+
+**What I would do next:** keep the detector and the classifier, and use them for something other
+than a breakout entry — as a *filter* on the sibling project's continuation long (which already
+earns +0.171R on 15m and takes every breakout, including the ones stacked at the bottom of a
+downtrend), or as a position-sizing input. The classifier is an asset; this payoff is not.
 
 ## Usage
 

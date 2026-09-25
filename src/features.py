@@ -132,6 +132,7 @@ def box_features(symbol: str, interval: str, df: pd.DataFrame, cfg: Config) -> p
                 label=1 if box.side == UP else 0,
                 r_long=r_long, r_short=r_short,
                 entry=box.entry, box_high=box.box_high, box_low=box.box_low,
+                breakout_idx=box.breakout_idx,
             )
         )
     return pd.DataFrame(rows)
