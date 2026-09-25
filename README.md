@@ -155,12 +155,17 @@ window, with the mirror contradicting it — that is a hypothesis, not an edge.
   **magnitude**, and the follow-through after a breakout is close to a coin flip (49% hit at
   sub-1 R:R). Being right about the side while being blind to the distance does not pay.
 
-### Bridge test: could the classifier filter the profitable continuation long?
+### Bridge test: could the classifier filter the continuation long?
 
-The sibling project's continuation long earns ~+0.17R on 15m and takes *every* breakout, including
-the ones sitting at the bottom of a downtrend. The obvious use for this classifier was as a filter
-on those entries: match each long trade to a predictor box, and bucket that strategy's expectancy by
-`p_up`.
+> **Note:** the sibling project's continuation long was later retested over **2 years** and came
+> back at **−0.089R** (7 of 8 quarters negative). Its "profitable" premise does not survive a
+> longer sample, so this bridge test is really "can the classifier rescue a strategy that doesn't
+> work" — no. Kept as a record of the test, not as a live recommendation.
+
+The sibling project's continuation long earns ~+0.17R **on the 60-day window it was measured over**
+and takes *every* breakout, including the ones sitting at the bottom of a downtrend. The obvious use
+for this classifier was as a filter on those entries: match each long trade to a predictor box, and
+bucket that strategy's expectancy by `p_up`.
 
 | | 15m | 1h |
 | --- | --- | --- |
