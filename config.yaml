@@ -1,0 +1,44 @@
+universe:
+  quote_asset: USDT
+  top_n: 500
+  exclude_stables: true
+  exclude_leveraged: true
+
+intervals: ["15m", "1h"]
+
+history_days:
+  "15m": 120
+  "1h": 365
+
+box:
+  lookback: 24          # bars forming the consolidation box
+  max_range_pct: 8.0    # box must be at least this tight
+  breakout_window: 50   # bars allowed for the breakout to happen
+  min_box_age: 6        # box must have held at least this long
+
+features:
+  trend_window: 200     # SMA / range window
+  prior_return_window: 50
+  atr_short: 14
+  atr_long: 100
+
+model:
+  n_folds: 5
+  min_train_frac: 0.30  # first fold's training slice
+  n_bins: 5             # scorecard quintiles
+  trees: 200
+  learning_rate: 0.05
+  max_depth: 3
+
+evaluation:
+  thresholds: [0.5, 0.55, 0.6, 0.65, 0.7]
+  target_mode: box_height   # stop at the opposite edge, target = box height
+  target_r: 2.0             # used if target_mode is r_multiple
+  max_bars: 100
+  fee_per_side_pct: 0.1
+  slippage_pct: 0.05
+  funding_pct_per_8h: 0.01  # charged on the short side only
+
+output:
+  cache_dir: data/cache
+  reports_dir: reports
