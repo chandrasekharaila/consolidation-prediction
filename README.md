@@ -145,7 +145,7 @@ window, with the mirror contradicting it — that is a hypothesis, not an edge.
 
 ## Verdict
 
-**The direction model is real. The trade built on it is not.**
+**The direction model is real. Nothing built on it pays.**
 
 - Predicting which way a consolidation breaks works, out of sample, and stable across folds:
   **76.3% / AUC 0.821** on 15m, **71.2% / AUC 0.769** on 1h.
@@ -155,10 +155,33 @@ window, with the mirror contradicting it — that is a hypothesis, not an edge.
   **magnitude**, and the follow-through after a breakout is close to a coin flip (49% hit at
   sub-1 R:R). Being right about the side while being blind to the distance does not pay.
 
-**What I would do next:** keep the detector and the classifier, and use them for something other
-than a breakout entry — as a *filter* on the sibling project's continuation long (which already
-earns +0.171R on 15m and takes every breakout, including the ones stacked at the bottom of a
-downtrend), or as a position-sizing input. The classifier is an asset; this payoff is not.
+### Bridge test: could the classifier filter the profitable continuation long?
+
+The sibling project's continuation long earns ~+0.17R on 15m and takes *every* breakout, including
+the ones sitting at the bottom of a downtrend. The obvious use for this classifier was as a filter
+on those entries: match each long trade to a predictor box, and bucket that strategy's expectancy by
+`p_up`.
+
+| | 15m | 1h |
+| --- | --- | --- |
+| trades matched to a box | 1067 (66%) | 329 (68%) |
+| baseline expectancy | **+0.083R** ±0.036 | **+0.176R** ±0.074 |
+| keep `p_up ≥ 0.6` | +0.163R (66% kept) | +0.135R (40%) |
+| keep `p_up ≥ 0.7` | **+0.205R** (56%) | +0.107R (29%) |
+| keep `p_up ≥ 0.8` | +0.255R (32%) | −0.118R (13%) |
+| quintiles | −0.019, −0.119, +0.066, +0.179, +0.308 | +0.142, +0.556, −0.065, +0.305, −0.063 |
+| top minus bottom | **+0.327R** | **−0.205R** |
+
+**On 15m it looks like a win** — a clean monotone gradient, and keeping `p_up ≥ 0.7` lifts the
+strategy from +0.083R to +0.205R on 56% of trades (about +0.12R, roughly 2 standard errors).
+
+**On 1h it reverses and makes things worse**: +0.176R → +0.107R, and at `p_up ≥ 0.8` it goes
+negative. The 1h quintiles are non-monotonic noise.
+
+**So the filter is a timeframe artifact, not an edge.** This is the third independent test to show
+the same 15m-only pattern with the slower timeframe contradicting it — the magnitude gradient above
+(+0.191R / −0.063R) and the sibling project's own timeframe comparison behaved identically. Do not
+ship it.
 
 ## Usage
 
